@@ -34,4 +34,3 @@ fastq-dump --origfmt --split-files --gzip ${sample}
 echo ${sample} "done"
 
 done
-
