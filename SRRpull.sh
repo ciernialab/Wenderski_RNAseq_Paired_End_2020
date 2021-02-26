@@ -32,18 +32,6 @@ echo ${sample} "starting dump"
 fastq-dump --origfmt --split-files --gzip ${sample}
 
 echo ${sample} "done"
-#######################################################################################
-#validate each SRA file and save to output log
-#https://reneshbedre.github.io/blog/fqutil.html
-#######################################################################################
-
-echo ${sample} "starting sra check"
-
-vdb-validate /alder/home/xlum/KCl_RNAseq/SRA/${sample} 2> output/SRA_checksum/${sample}_SRAcheck.log
-
-echo ${sample} "done"
 
 done
 
-#combine logs into one output file
-cat output/SRA_checksum/*_SRAcheck.log > output/SRA_checksum/SRAcheck.log

@@ -6,10 +6,17 @@
 #SBATCH --output=vdb_validate.out
 #SBATCH --time=12:00:00
 
+
+
 for sample in `cat SRR_Acc_List.txt`
 do
 
-echo ${sample} "starting sra check"
+echo ${sample} "starting vdb_validate"
+
+#######################################################################################
+#validate each SRA file and save to output log
+#https://reneshbedre.github.io/blog/fqutil.html
+#######################################################################################
 
 vdb-validate /alder/home/xlum/KCl_RNAseq/SRA/${sample} 2> output/SRA_checksum/${sample}_SRAcheck.log
 
