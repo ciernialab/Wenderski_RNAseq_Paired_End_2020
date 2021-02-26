@@ -116,4 +116,16 @@ Run the following script to align trimmed fastq files to the mm10 genome using S
 sbatch STAR_align.sh
 ```
 
+## Step 6: Filter aligned files
+We will now convert sam files to bam and filter to remove PCR duplicates, remove unmapped reads and econdary alignments (multi-mappers), and remove unpaired reads.
 
+Samtools is used to convert sam to bam.
+Samtools fixmate is used to removed unmapped reads and 2ndary alignments.
+Remove PCR duplicates using -F 0x400 and -f 0x2 to keep only propperly paired reads.
+Index reads and collect additional QC metrics using picard tools and samtools flagstat.
+QC metrics are then collected into a single report using multiqc.
+
+Run the following script.
+```
+sbatch SamtoolsFiltering.sh
+```
