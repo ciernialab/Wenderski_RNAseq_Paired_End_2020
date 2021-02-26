@@ -63,5 +63,57 @@ sbatch pretrim_fastqc.sh
 Check PretrimFastQC_multiqc_report.html for details of sequence quality.
 
 ## Step 3: Trimming fastq files 
+We need to remove adapters and poor quality reads before aligning.
+
+Trimmomatic will look for seed matches of 16 bases with 2 mismatches allowed and will then extend and clip if a score of 30 for PE or 10 for SE is reached (~17 base match).
+
+Minimum adapter length is 8 bases.
+
+T = keeps both reads even if only one passes critieria.
+
+Trims low quality bases at leading and trailing if quality score < 15.
+
+Clipped the first 3 basepairs: HEADCROP 3 due to low quality and high G based on 1st round of trimming.
+
+Sliding window: scans in a 4 base window, cuts when the average quality drops below 15.
+
+Log outputs number of input reads, trimmed, and surviving reads in the trim_log_samplename.
+
+It uses TruSeq3-PE.fa (comes wiht Trimmomatic download).
+
+The path is set in bash_profile with $ADAPTERS
+To check the content of the file:
+```
+less $ADAPTERS/TruSeq3-PE.fa
+```
+
+Run the script.
+```
+sbatch Trim.sh
+```
+
+## Repeat QC on post trim file
+This step is the same as pretrim.
+```
+sbatch postrim_fastqc.sh
+```
+
+# Step 4: QC of Fastq Files: Contamination Screening
+FastQ Screen is an application allowing us to search a large sequence dataset against a panel of different genomes to determine from where the data originate.
+
+The program generates both text and graphical output to inform you what proportion of the library was able to map, either uniquely or to more than one location, against each of the specified reference genomes. 
+
+Run script to check trimmed fastq files.
+```
+sbatch Fastqscreen.sh
+```
+
+The output is found in output/FastqScreen_multiqc_report.html
+
+## Step 5: Align to mm10 genome using STAR
+Run the following script to align trimmed fastq files to the mm10 genome using STAR. We specified the location of index files in bash_profile. 
+```
+sbatch STAR_align.sh
+```
 
 
