@@ -9,7 +9,6 @@ We will be analyzing RNAseq dataset from the following paper:https://www.ncbi.nl
 
 The data is stored in NCBI GEO as SRR files which are highly compressed files that can be converted to fastq files using SRA Toolkit: https://www.ncbi.nlm.nih.gov/Traces/study/?acc=SRP252982&o=acc_s%3Aa.
 
-
 To download a text file of SRR files, use the Run Select function.
 Navigate to the bottom of the page and select all the RNA-seq data. Careful to not select any ATAC-seq data. Download "Accession List".
 
@@ -18,15 +17,37 @@ Navigate to the bottom of the page and select all the RNA-seq data. Careful to n
 cd ~/ && mkdir KCl_RNAseq
 ```
 
-
 Make a copy of the SRR_Acc.List.txt file in your home directory.
 ```
 cd ~/KCl_RNAseq
 nano SRR_Acc_List.txt
-
+```
 
 ### Run the SRRpull.sh script
 
-The script is set 
+The script is setup to run from the experiment directory inside home directory.
+
+It makes a SRA directory in the experiment directory and uses a loop to pull each SRR file in SRR_Acc_List.txt using prefetch.
+
+We added --split to fastq-dump command to get R1 and R2 fastq for each SRR entry because the files are PE.
+
+Make a SRR_pull.sh script in the experiment directory and run the script as sbatch submission to Alder.
+```
+sbatch SRR.pull.sh
+```
+
+Check to see if the script is running.
+```
+squeue
+```
+
+Can also check to see if SRAfetch is running properly by checking the contents of the experiment directory to see if a SRAfetch.out has been generated
+```
+head SRAfetch.out
+```
+
+This can also be used to monitor the progress of SRAfetch.
+
+
 
 
