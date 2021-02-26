@@ -41,13 +41,27 @@ Check to see if the script is running.
 squeue
 ```
 
-Can also check to see if SRAfetch is running properly by checking the contents of the experiment directory to see if a SRAfetch.out has been generated
+Can also check to see if SRAfetch is running properly by checking the contents of the experiment directory to see if a SRAfetch.out has been generated.
 ```
 head SRAfetch.out
 ```
 
 This can also be used to monitor the progress of SRAfetch.
 
+Once the script has finished running, make sure to check all the SRA files have been successfully copied over.
 
+cd ~/KCl_RNAseq/SRA/SRA_checksum/SRAcheck.log
+
+Make sure ALL files have 'OK' and "Database 'SRRNAME.sra' is consistent" listed. Need to rerun SRRpull.sh script if encountered any errors.
+
+## Step 2: QC of Fastq Files
+We need to check the quality of the fastq files before and after trimming. We are using FastQC from https://www.bioinformatics.babraham.ac.uk/projects/fastqc/. Refer to their tutorial for output file interpretations.
+```
+sbatch pretrim_fastqc.sh
+```
+
+Check PretrimFastQC_multiqc_report.html for details of sequence quality.
+
+## Step 3: Trimming fastq files 
 
 
