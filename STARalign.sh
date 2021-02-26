@@ -20,10 +20,9 @@ do
 
 echo ${sample} "starting unzip fastq.gz"
 
+gunzip -c {sample} > ${sample}.fastq
 
-
-
-
+echo ${sample} "finished unzip fastq.gz"
 
 echo ${sample} "starting STAR alignment"
 
@@ -45,9 +44,6 @@ STAR --runThreadN 12 \
 --outSAMtype BAM SortedByCoordinate \
 --outFileNamePrefix star_out/${sample}
 
-
-
-
 echo ${sample} "finished STARalignment"
 
 done
@@ -57,4 +53,4 @@ done
 #combine
 #######################################################################################
 
-multiqc output/fastq_screen --filename output/FastqScreen_multiqc_report.html --ignore-samples Undetermined* --interactive
+multiqc output/STARlogs --filename output/STAR_alignment_report.html --ignore-samples Undetermined* --interactive
