@@ -47,4 +47,4 @@ done
 #combine
 #######################################################################################
 
-multiqc output/STARlogs --filename output/STAR_align_report.html --ignore-samples Undetermined* --interactive
+multiqc output/starlogs --filename output/STAR_align_report.html --ignore-samples Undetermined* --interactive
