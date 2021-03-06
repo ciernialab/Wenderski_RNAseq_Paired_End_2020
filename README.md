@@ -111,6 +111,13 @@ sbatch Fastqscreen.sh
 The output is found in output/FastqScreen_multiqc_report.html
 
 ## Step 5: Align to mm10 genome using STAR
+before aligning to STAR, we need to first unzip the fastq files in the trimmed directory.
+
+Run the following script to unzip all paired trimmed fastq files
+```
+sbatch trimmed_unzip.sh
+```
+
 Run the following script to align trimmed fastq files to the mm10 genome using STAR. We specified the location of index files in bash_profile. 
 ```
 sbatch STAR_align.sh
