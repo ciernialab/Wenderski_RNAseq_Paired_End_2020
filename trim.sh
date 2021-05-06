@@ -15,6 +15,10 @@ mkdir -p output/trimlogs
 for sample in `cat SRR_Acc_List.txt`
 do
 
+echo ${sample} "starting to unzip fastq files"
+
+
+
 echo ${sample} "starting trim"
 
 #PE trimming for adapters and quality
