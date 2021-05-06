@@ -17,7 +17,6 @@ export BT2_HOME=/alder/data/cbh/ciernia-data/pipeline-tools/bowtie2-2.4.1-linux-
 
 export BT2_MM10=/alder/data/cbh/ciernia-data/genomes/bowtie2indexes/Mus_musculus/Ensembl/GRCm38/Sequence/Bowtie2Index
 
-
 #STAR
 PATH=$PATH:/alder/data/cbh/ciernia-data/pipeline-tools/STAR-2.7.4a/bin/Linux_x86_64_static/
 
@@ -55,5 +54,8 @@ export mm10chrsizes=/alder/data/cbh/ciernia-data/pipeline-tools/UCSC/mm10.chrom.
 
 #STAR
 PATH=$PATH:/alder/data/cbh/ciernia-data/pipeline-tools/STAR-2.7.4a/bin/Linux_x86_64_static/
+
+#featureCounts
+PATH=$PATH:/alder/home/xlum/pipline-tools/subread-2.0.2-source.//bin/
 
 export PATH
