@@ -43,9 +43,3 @@ echo ${sample} "finished STARalign"
 
 done
 
-
-#######################################################################################
-#combine
-#######################################################################################
-
-multiqc output/starlogs --filename output/STAR_align_report.html --ignore-samples Undetermined* --interactive
