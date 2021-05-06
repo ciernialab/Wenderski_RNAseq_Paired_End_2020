@@ -136,3 +136,34 @@ Run the following script.
 ```
 sbatch SamtoolsFiltering.sh
 ```
+
+## Step 7: Counting Reads using featureCounts
+Now that we have aligned reads to the mm10 genome, the next step is to count how many reads have been mapped to each gene.
+
+The input files required are BAM files and an associated annotation file in GTF format. featureCounts (alternative htseq-count can be used instead) takes the alignment coordinates for each read and cross-references that to the coordinates for features described in the GTF file. featureCounts is best used for counting reads associated with gene but not splice isoforms and transcripts.
+
+To set up featureCounts, download the latest subread package version from SourceForce website (https://sourceforge.net/projects/subread/files/subread-2.0.2/). Currently, the latest version is subread-2.0.2-source.tar.gz. Use FileZilla to transfer the download file to pipline-tools directory. Other useful links: http://bioinf.wehi.edu.au/subread-package/SubreadUsersGuide.pdf.
+
+To unzip the subread package and delete the zip file,
+```
+tar zxvf subread-2.0.2-source.tar.gz && rm subread-2.0.2-source.tar.gz
+```
+
+Enter the src directory and then build it on Linux/Unix system,
+```
+make -f Makefile.Linux
+```
+Create path for the featureCounts and add to .bash_profile and source the changes made to .bash_profile before they take place in the current terminal session. The bash profile will load each time you start a new session.
+```
+#featureCounts
+PATH=$PATH:/alder/home/xlum/pipline-tools/subread-2.0.2-source.//bin/
+```
+
+To use featureCounts, run the following script.
+```
+sbatch featureCounts.sh
+```
+
+
+
+
