@@ -14,7 +14,7 @@ Navigate to the bottom of the page and select all the RNA-seq data. Careful to n
 
 ### Make a directory for the experiment in your home directory
 ```
-cd ~/ && mkdir KCl_RNAseq
+cd ~/ && mkdir Wenderski_RNAseq
 ```
 
 Make a copy of the SRR_Acc.List.txt file in your home directory.
