@@ -57,7 +57,7 @@ Make sure ALL files have 'OK' and "Database 'SRRNAME.sra' is consistent" listed.
 ## Step 2: Concatenate fastq files
 This paper sequenced the RNA library for a given sample on 2 separate sequencing runs. The paired-end sequencing data for each sample are stored in consecutive SRA files (i.e. SRR11313882 & SRR11313883 are from the same RNA library and so is SRR11313884 and SRR11313885...etc). These files needs to be contacaneted into a single file for both read 1 and read 2 of each sample. 
 
-To do so, run the following script.
+To do so, run the following script. The new fastq files are stored in a new directory - combined_fastqc under the first occurance of SRA file name for a given sample. For instance, SRR11313882 & SRR11313883 are combined together. The new fastq files will be stored under SRR11313882.
 ```
 sbatch combine_fastq.sh
 ```
@@ -69,6 +69,31 @@ sbatch combine_fastq2.sh
 
 ## Step 3: QC of Fastq Files
 We need to check the quality of the fastq files before and after trimming. We are using FastQC from https://www.bioinformatics.babraham.ac.uk/projects/fastqc/. Refer to their tutorial for output file interpretations.
+
+We have combined all the fastq files from the same sample into one fastq file, so our SRR_Acc_List.txt also needs to be updated for downstream scripts that references the SRR_Acc_List.txt file. 
+
+We will make a copy of the SRR_Acc_List.txt file
+
+```
+cp SRR_Acc_List.txt SRR_Acc_List_2.txt
+```
+
+Then we'll use the ex (text editor) command to match every line inside the file and deleting the next line.
+
+```
+ex SRR_Acc_List_2.txt <<\EX
+:g/$/+d
+:wq!
+EX
+```
+
+Make sure to double check the txt file to ensure it contains every other SRA file name.
+
+```
+cat SRR_Acc_List_2.txt
+```
+
+Run the following script to perform quality check on the fastq files prior to trimming.
 ```
 sbatch pretrim_fastqc.sh
 ```
