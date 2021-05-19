@@ -14,12 +14,12 @@ Navigate to the bottom of the page and select all the RNA-seq data. Careful to n
 
 ### Make a directory for the experiment in your home directory
 ```
-cd ~/ && mkdir KCl_RNAseq
+cd ~/ && mkdir Wenderski_RNAseq
 ```
 
 Make a copy of the SRR_Acc.List.txt file in your home directory.
 ```
-cd ~/KCl_RNAseq
+cd ~/Wenderski_RNAseq
 nano SRR_Acc_List.txt
 ```
 
@@ -50,11 +50,24 @@ This can also be used to monitor the progress of SRAfetch.
 
 Once the script has finished running, make sure to check all the SRA files have been successfully copied over.
 
-cd ~/KCl_RNAseq/SRA/SRA_checksum/SRAcheck.log
+cd ~/Wenderski_RNAseq/SRA/SRA_checksum/SRAcheck.log
 
 Make sure ALL files have 'OK' and "Database 'SRRNAME.sra' is consistent" listed. Need to rerun SRRpull.sh script if encountered any errors.
 
-## Step 2: QC of Fastq Files
+## Step 2: Concatenate fastq files
+This paper sequenced the RNA library for a given sample on 2 separate sequencing runs. The paired-end sequencing data for each sample are stored in consecutive SRA files (i.e. SRR11313882 & SRR11313883 are from the same RNA library and so is SRR11313884 and SRR11313885...etc). These files needs to be contacaneted into a single file for both read 1 and read 2 of each sample. 
+
+To do so, run the following script.
+```
+sbatch combine_fastq.sh
+```
+
+Alternatively can also run this script (which is much faster ~2 min) inside the directory containing the individual fastq files (i.e. SRA).
+```
+sbatch combine_fastq2.sh
+```
+
+## Step 3: QC of Fastq Files
 We need to check the quality of the fastq files before and after trimming. We are using FastQC from https://www.bioinformatics.babraham.ac.uk/projects/fastqc/. Refer to their tutorial for output file interpretations.
 ```
 sbatch pretrim_fastqc.sh
@@ -62,7 +75,7 @@ sbatch pretrim_fastqc.sh
 
 Check PretrimFastQC_multiqc_report.html for details of sequence quality.
 
-## Step 3: Trimming fastq files 
+## Step 4: Trimming fastq files 
 We need to remove adapters and poor quality reads before aligning.
 
 Trimmomatic will look for seed matches of 16 bases with 2 mismatches allowed and will then extend and clip if a score of 30 for PE or 10 for SE is reached (~17 base match).
@@ -89,7 +102,7 @@ less $ADAPTERS/TruSeq3-PE.fa
 
 Run the script.
 ```
-sbatch Trim.sh
+sbatch trim.sh
 ```
 
 ## Repeat QC on post trim file
@@ -98,19 +111,19 @@ This step is the same as pretrim.
 sbatch postrim_fastqc.sh
 ```
 
-# Step 4: QC of Fastq Files: Contamination Screening
+# Step 5: QC of Fastq Files: Contamination Screening
 FastQ Screen is an application allowing us to search a large sequence dataset against a panel of different genomes to determine from where the data originate.
 
 The program generates both text and graphical output to inform you what proportion of the library was able to map, either uniquely or to more than one location, against each of the specified reference genomes. 
 
 Run script to check trimmed fastq files.
 ```
-sbatch Fastqscreen.sh
+sbatch fastqscreen.sh
 ```
 
 The output is found in output/FastqScreen_multiqc_report.html
 
-## Step 5: Align to mm10 genome using STAR
+## Step 6: Align to mm10 genome using STAR
 before aligning to STAR, we need to first unzip the fastq files in the trimmed directory.
 
 Run the following script to unzip all paired trimmed fastq files
@@ -123,12 +136,13 @@ Run the following script to align trimmed fastq files to the mm10 genome using S
 sbatch STAR_align.sh
 ```
 
-## Step 6: Filter aligned files
+## Step 7: Filter aligned files
 We will now convert sam files to bam and filter to remove PCR duplicates, remove unmapped reads and econdary alignments (multi-mappers), and remove unpaired reads.
 
 Samtools is used to convert sam to bam.
 Samtools fixmate is used to removed unmapped reads and 2ndary alignments.
-Remove PCR duplicates using -F 0x400 and -f 0x2 to keep only propperly paired reads.
+-f 0x2 to keep only propperly paired reads.
+PCR duplicates if NOT removed due to possibility of accidental removal of biological duplicates.
 Index reads and collect additional QC metrics using picard tools and samtools flagstat.
 QC metrics are then collected into a single report using multiqc.
 
@@ -137,7 +151,7 @@ Run the following script.
 sbatch SamtoolsFiltering.sh
 ```
 
-## Step 7: Counting Reads using featureCounts
+## Step 8: Counting Reads using featureCounts
 Now that we have aligned reads to the mm10 genome, the next step is to count how many reads have been mapped to each gene.
 
 The input files required are BAM files and an associated annotation file in GTF format. featureCounts (alternative htseq-count can be used instead) takes the alignment coordinates for each read and cross-references that to the coordinates for features described in the GTF file. featureCounts is best used for counting reads associated with gene but not splice isoforms and transcripts.
