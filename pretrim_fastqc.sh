@@ -12,14 +12,14 @@
 #######################################################################################
 mkdir -p output/pretrim
 
-for sample in `cat SRR_Acc_List.txt`
+for sample in `cat SRR_Acc_List_2.txt`
 do
 
 echo ${sample} "starting"
 
-fastqc SRA/${sample}_1.fastq.gz --outdir output/pretrim
+fastqc combined_fastq/${sample}_1.fastq.gz --outdir output/pretrim
 
-fastqc SRA/${sample}_2.fastq.gz --outdir output/pretrim
+fastqc combined_fastq/${sample}_2.fastq.gz --outdir output/pretrim
 
 echo ${sample} "finished"
 
