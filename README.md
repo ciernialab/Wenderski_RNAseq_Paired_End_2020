@@ -72,9 +72,10 @@ We need to check the quality of the fastq files before and after trimming. We ar
 
 We have combined all the fastq files from the same sample into one fastq file, so our SRR_Acc_List.txt also needs to be updated for downstream scripts that references the SRR_Acc_List.txt file. 
 
-We will make a copy of the SRR_Acc_List.txt file
+We will first ensure SRR_Acc_List.txt is sorted and make a copy of it.
 
 ```
+sort -o SRR_Acc_List.txt SRR_Acc_List.txt
 cp SRR_Acc_List.txt SRR_Acc_List_2.txt
 ```
 
@@ -149,6 +150,16 @@ sbatch fastqscreen.sh
 The output is found in output/FastqScreen_multiqc_report.html
 
 ## Step 6: Align to mm10 genome using STAR
+
+### Generating star index 
+We first need to generate star indices for efficient mapping of RNA-seq fastq data to the indexed reference genome.
+
+In desired directory, run the following script for setting up genome sequence, annotation, and star indices. The star index is optimized for 2 x 75bp sequencing data. Edit --sjdbOverhang for alternative read lengths.  Ideally, this length should be equal to the ReadLength-1, where ReadLength is the length of the reads. For more information: https://physiology.med.cornell.edu/faculty/skrabanek/lab/angsd/lecture_notes/STARmanual.pdf.
+```
+sbatch mm10STARbuild.sh
+```
+
+### STAR Alignment
 before aligning to STAR, we need to first unzip the fastq files in the trimmed directory.
 
 Run the following script to unzip all paired trimmed fastq files
