@@ -22,7 +22,7 @@ echo ${sample} "starting to unzip fastq files"
 echo ${sample} "starting trim"
 
 #PE trimming for adapters and quality
-java -jar $TRIMMOMATIC/trimmomatic-0.39.jar PE SRA/${sample}_1.fastq.gz SRA/${sample}_2.fastq.gz trimmed/${sample}_1.paired.fastq.gz trimmed/${sample}_1.unpaired.fastq.gz trimmed/${sample}_2.paired.fastq.gz trimmed/${sample}_2.unpaired.fastq.gz ILLUMINACLIP:$ADAPTERS/TruSeq3-PE.fa:2:30:10:8:T HEADCROP:3 LEADING:15 TRAILING:15 SLIDINGWINDOW:4:15 MINLEN:15 &> output/trimlogs/trim_log_${sample}
+java -jar $TRIMMOMATIC/trimmomatic-0.39.jar PE combined_fastq/${sample}_1.fastq.gz combined_fastq/${sample}_2.fastq.gz trimmed/${sample}_1.paired.fastq.gz trimmed/${sample}_1.unpaired.fastq.gz trimmed/${sample}_2.paired.fastq.gz trimmed/${sample}_2.unpaired.fastq.gz ILLUMINACLIP:$ADAPTERS/TruSeq3-PE.fa:2:30:10:8:T HEADCROP:3 LEADING:15 TRAILING:15 SLIDINGWINDOW:4:15 MINLEN:15 &> output/trimlogs/trim_log_${sample}
 
 	#trimmomatic will look for seed matches of 16 bases with 2 mismatches allowed
 	#will then extend and clip if a score of 30 for PE or 10 for SE is reached (~17 base match)
