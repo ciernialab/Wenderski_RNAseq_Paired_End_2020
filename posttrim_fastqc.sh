@@ -9,7 +9,7 @@
 #######################################################################################
 mkdir -p output/posttrim
 
-for sample in `cat SRR_Acc_List.txt`
+for sample in `cat SRR_Acc_List_2.txt`
 do
 
 echo ${sample} "starting fastqc"
