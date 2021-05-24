@@ -32,6 +32,6 @@ mkdir -p STAR_libs/mm10/star_indices/
 
 STAR --runThreadN 20 \
 --runMode genomeGenerate \
---genomeDir STAR/mm10/star_indices/ \
---genomeFastaFiles STAR/mm10/sequence/GRCm38_r92.all.fa \
+--genomeDir STAR_libs/mm10/star_indices/ \
+--genomeFastaFiles STAR_libs/mm10/sequence/GRCm38_r92.all.fa \
 --sjdbGTFfile STAR_libs/mm10/annotation/Mus_musculus.GRCm38.92.gtf --sjdbOverhang 74
