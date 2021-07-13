@@ -172,8 +172,10 @@ Run the following script to align trimmed fastq files to the mm10 genome using S
 sbatch STAR_align.sh
 ```
 
-## Step 7: Filter aligned files
-We will now convert sam files to bam and filter to remove PCR duplicates, remove unmapped reads and econdary alignments (multi-mappers), and remove unpaired reads.
+output star count matrix in the format: SRR11313882.ReadsPerGene.out.tab can be exported using FileZilla for expression analysis using Rstudio utilizing either edgeR or DESeq2.
+
+## Step 7: Filter aligned files (Optional)
+We will now convert sam files to bam and filter to remove PCR duplicates, remove unmapped reads and econdary alignments (multi-mappers), and remove unpaired reads. This step is optional because star count matrix provides the same gene count output as featureCounts which requires prior data filtering using SAMFilter.
 
 Samtools is used to convert sam to bam.
 Samtools fixmate is used to removed unmapped reads and 2ndary alignments.
@@ -187,8 +189,8 @@ Run the following script.
 sbatch SamtoolsFiltering.sh
 ```
 
-## Step 8: Counting Reads using featureCounts
-Now that we have aligned reads to the mm10 genome, the next step is to count how many reads have been mapped to each gene.
+## Step 8: Counting Reads using featureCounts (Optional)
+Now that we have aligned reads to the mm10 genome, the next step is to count how many reads have been mapped to each gene. This step is optional because star count matrix provides the same gene count output as featureCounts. 
 
 The input files required are BAM files and an associated annotation file in GTF format. featureCounts (alternative htseq-count can be used instead) takes the alignment coordinates for each read and cross-references that to the coordinates for features described in the GTF file. featureCounts is best used for counting reads associated with gene but not splice isoforms and transcripts.
 
@@ -215,5 +217,82 @@ sbatch featureCounts.sh
 ```
 
 
+## Step 9: Making TrackHubs using HOMOR
 
+### Make Tag Directories
+The first step to running HOMER is to make Tag Directories: http://homer.ucsd.edu/homer/ngs/tagDir.html We will make a folder Tag_Directories and then make tags for each sample WT and KO sample individually and all the input samples together. This is approach is specifically based for this experiment in which we have only 2-3 biological replicates per condition and input samples are not matched to individual samples. 
 
+For WT 2h treatment with TTX/APV:
+SRR11313882
+SRR11313884
+SRR11313886
+SRR11313888
+SRR11313890
+
+For KO 2h treatment with TTX/APV:
+SRR11313892
+SRR11313894
+SRR11313896
+SRR11313898
+SRR11313900
+SRR11313902
+SRR11313904
+
+For WT 2h treatment with TTX/APV followed by 1h KCl stimulation:
+SRR11313906
+SRR11313908
+SRR11313910
+SRR11313912
+SRR11313914
+
+For WT 7h treatment with TTX/APV:
+SRR11313916
+SRR11313918
+SRR11313920
+SRR11313922
+
+For WT 7h treatment with TTX/APV followed by 6h KCl stimulation:
+SRR11313924
+SRR11313926
+SRR11313928
+
+To make a tag directory for each sample run:
+```
+sbatch HOMER_MakeTags.sh
+```
+
+### UCSC Genome Browser Tracks
+The basic strategy HOMER uses is to create a bedGraph formatted file that can then be uploaded as a custom track to the genome browser. This is accomplished using the makeUCSCfile program. To make a ucsc visualization file, type the following. To visualize the exact length of the reads, use "-fragLength given".
+
+makeUCSCfile -o auto -fragLength given 
+
+i.e. makeUCSCfile PU.1-RNA-Seq/ -o auto
+(output file will be in the PU.1-RNA-Seq/ folder named PU.1-RNA-Seq.ucsc.bedGraph.gz)
+
+The "-o auto" with make the program automatically generate an output file name (i.e. TagDirectory.ucsc.bedGraph.gz) and place it in the tag directory which helps with the organization of all these files. The output file can be named differently by specifying "-o outputfilename" or by simply omitting "-o", which will send the output of the program to stdout (i.e. add " > outputfile" to capture it in the file outputfile). It is recommended that you zip the file using gzip and directly upload the zipped file when loading custom tracks at UCSC.
+
+To visualize the experiment in the UCSC Genome Browser, go to Genome Browser page and select the appropriate genome (i.e. the genome that the sequencing tags were mapped to). Then click on the "add custom tracks" button (this will read "manage custom tracks" once at least one custom track is loaded). Enter the file created earlier in the "Paste URLs or data" section and click "Submit".
+
+There are two important parameters to consider during normalization of data. First, the total read depth of the experiment is important, which is obvious. The 2nd factor to consider is the length of the reads (this is new to v4.4). The problem is that if an experiment has longer fragment lengths, it will generate additional coverage than an experiment with shorter fragment lengths. In order to make sure there total area under the curve is the same for each experiment, experiments are normalized to a fixed number of reads as well as a 100 bp fragment length. If reads are longer than 100 bp, they are 'down-normalized' a fractional amount such that they produce the same relative coverage of a 100 bp fragment length. Experiments with shorter fragment lengths are 'up-normalized' a proportional amount (maximum of 4x or 25 bp). This allows experiments with different fragment lengths to be comparable along the genome browser.
+Normalize the total number of reads to this number, default 1e7. This means that tags from an experiment with only 5 million mapped tags will count for 2 tags apiece. This script also fixes the chromosome names to include "chr" and change the MT chromosome to M. It also makes bigwig files needed for making a browser hub described below.
+
+```
+sbatch UCSCBrowserHOMER.sh
+```
+
+The bedGraph.gz files then then be loaded one at a time as custom tracks onto the UCSC genome browser. You can save the session and then look at them again later. However, this is very slow as you have to load each final individually. Instead, we can create a track hub, where all of our files can be loaded as a custom hub. 
+
+We first have to convert our bedGraph and peak bed files into compressed formats: bigwig and bigBed. We can so this using the UCSC genome browser utilities. These tools are already installed in /alder/data/cbh/ciernia-data/pipeline-tools/UCSC/ using rsync -aP rsync://hgdownload.soe.ucsc.edu/genome/admin/exe/linux.x86_64/ ./ 
+The path was added to the bash_profile: PATH=$PATH:/alder/data/cbh/ciernia-data/pipeline-tools/UCSC and so the tools can be called by name. We also need the chromosome sizes for mm10. This can be retrieved from UCSC with: wget http://hgdownload.cse.ucsc.edu/goldenPath/mm10/bigZips/mm10.chrom.sizes 
+A copy of this file is in /alder/data/cbh/ciernia-data/pipeline-tools/UCSC/ and can be called using $mm10chrsizes. This was all done using the UCSCBrowserHOMER.sh script run.
+
+Now that we have our compressed files we can setup our track hub:
+Track hubs require a webserver to host the files. We can use github to host all files < 25MB. Github supports byte-range access to files when they are accessed via the raw.githubusercontent.com style URLs. To obtain a raw URL to a file already uploaded on Github, click on a file in your repository and click the Raw button. The bigDataUrl field (and any other statement pointing to a URL like bigDataIndex, refUrl, barChartMatrixUrl, etc.) of your trackDb.txt file should use the "raw.githubusercontent.com" style URL. 
+https://genome.ucsc.edu/goldenPath/help/hgTrackHubHelp.html 
+
+Track hubs can now be specified in a single text file: http://genome.ucsc.edu/goldenPath/help/hgTracksHelp.html#UseOneFile 
+Once this text file is loaded onto github, you can get the RAW url for the text file and then check your hub works by pasting the url into the hub development took and clicking "Check Hub Settings". http://genome.ucsc.edu/cgi-bin/hgHubConnect?#hubDeveloper If your hub has no errors you can then click the "View on UCSC browser" to view your hub.
+
+We have setup a hub using the TrackHubmm10.txt file. The link to this file is:
+We have setup a hub using the TrackHubmm10.txt file. The link to this file is: http://microgliome.biochem.ubc.ca/BigWigs/Wenderski_RNAseq/TrackHubmm10_Wenderski_Master.txt
+If you paste this link into the "My Hubs" entry area: http://genome.ucsc.edu/cgi-bin/hgTracks?db=mm10&hubUrl=http://microgliome.biochem.ubc.ca/BigWigs/Wenderski_RNAseq/TrackHubmm10_Wenderski_Master.txt you can view the hub. You can edit the hub, add tracks etc. Then just check the hub, reload it and go!
