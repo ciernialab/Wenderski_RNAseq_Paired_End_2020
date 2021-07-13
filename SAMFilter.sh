@@ -15,7 +15,7 @@ module load R/3.6.1 #picard needs this
 
 mkdir -p output/sam/
 
-for sample in `cat SRR_Acc_List.txt`
+for sample in `cat SRR_Acc_List_2.txt`
 do
 
 echo ${sample} "starting filtering"
@@ -41,7 +41,9 @@ echo ${sample} "converting sam to bam"
 
 #convert sam to bam and name sort for fixmate
 #-@ 16 sets to 16 threads
-samtools view -bS star_align/${sample}.sorted.bamAligned.sortedByCoord.out.bam | samtools sort -n -@ 16 - -o star_align/${sample}_tmp.bam
+# -q 30 cmd for reads aligned with quality score higher than 30
+# -c to count
+samtools view -bS star_align/${sample}.sortedByCoord.out.bam | samtools sort -n -@ 16 -o star_align/${sample}_tmp.bam
 
 echo ${sample} "removing unmapped reads"
 
@@ -53,17 +55,17 @@ samtools fixmate -r star_align/${sample}_tmp.bam star_align/${sample}_tmp2.bam
 echo ${sample} "removing unpaired reads"
 #coordinate sort, then filter:
 #remove PCR duplicates:https://www.biostars.org/p/318974/
-# -F INT   only include reads with none of the bits set in INT set in FLAG [0]
-#so include none of 0x400
 #keep only output propper pairs: https://broadinstitute.github.io/picard/explain-flags.html
 # -f 0x2
-#samtools sort -@ 16 test_tmp2.bam |samtools view -b -F 0x400 -f 0x2 -@ 16 - -o test_dedup.bam 
-samtools sort -@ 16 star_align/${sample}_tmp2.bam |samtools view -b -F 0x400 -f 0x2 -@ 16 - -o star_align/${sample}_dedup.bam 
+#samtools sort -@ 16 test_tmp2.bam |samtools view -b -f 0x2 -@ 16 - -o test_dedup.bam 
+samtools sort -n -@ 16 star_align/${sample}_tmp2.bam |samtools view -b -f 0x2 -@ 16 -o star_align/${sample}_dedup.bam 
 
 echo ${sample} "index"
 
 #index
 samtools index star_align/${sample}_dedup.bam 
+
+samtools index star_align/${sample}.sorted.bamAligned.sortedByCoord.out.bam
 
 echo ${sample} "QC metrics"
 
@@ -71,10 +73,10 @@ echo ${sample} "QC metrics"
 #java -jar $PICARD FixMateInformation I=aligned/${sample}_dedup.bam O=output/sam/${sample}_fixmate.txt
 
 #picard alignment summary
-java -jar $PICARD CollectAlignmentSummaryMetrics I=aligned/${sample}_dedup.bam O=output/sam/${sample}_dedup_alignsum.txt
+java -jar $PICARD CollectAlignmentSummaryMetrics -I aligned/${sample}_dedup.bam -O output/sam/${sample}_dedup_alignsum.txt
 
 #find insert size
-java -jar $PICARD CollectInsertSizeMetrics I=aligned/${sample}_dedup.bam H=output/sam/${sample}_histogram.pdf O=output/sam/${sample}_insertmetric.txt
+java -jar $PICARD CollectInsertSizeMetrics -I aligned/${sample}_dedup.bam -H output/sam/${sample}_histogram.pdf -O output/sam/${sample}_insertmetric.txt
 
 #flagstat
 samtools flagstat star_align/${sample}_dedup.bam > output/sam/${sample}_dedupFlagstat.txt
