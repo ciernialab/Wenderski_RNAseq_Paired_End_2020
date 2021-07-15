@@ -285,13 +285,13 @@ bedClip UCSCbrowsertracks/KO_2h_Repl1.sort.bedGraph $mm10chrsizes UCSCbrowsertra
 bedGraphToBigWig UCSCbrowsertracks/KO_2h_Repl1.sort2.bedGraph $mm10chrsizes UCSCbrowsertracks/KO_2h_Repl1.bw
 
 # KO_2h Repl2
-sort -k1,1 -k2,2n UCSCbrowsertracks/WT_2h_Repl2.bedGraph > UCSCbrowsertracks/WT_2h_Repl2.sort.bedGraph
+sort -k1,1 -k2,2n UCSCbrowsertracks/KO_2h_Repl2.bedGraph > UCSCbrowsertracks/KO_2h_Repl2.sort.bedGraph
 
-sed -i '$d' UCSCbrowsertracks/WT_2h_Repl2.sort.bedGraph
+sed -i '$d' UCSCbrowsertracks/KO_2h_Repl2.sort.bedGraph
 
-bedClip UCSCbrowsertracks/WT_2h_Repl2.sort.bedGraph $mm10chrsizes UCSCbrowsertracks/WT_2h_Repl2.sort2.bedGraph
+bedClip UCSCbrowsertracks/KO_2h_Repl2.sort.bedGraph $mm10chrsizes UCSCbrowsertracks/KO_2h_Repl2.sort2.bedGraph
 
-bedGraphToBigWig UCSCbrowsertracks/WT_2h_Repl2.sort2.bedGraph $mm10chrsizes UCSCbrowsertracks/WT_2h_Repl2.bw
+bedGraphToBigWig UCSCbrowsertracks/KO_2h_Repl2.sort2.bedGraph $mm10chrsizes UCSCbrowsertracks/KO_2h_Repl2.bw
 
 # KO_2h Repl3
 
