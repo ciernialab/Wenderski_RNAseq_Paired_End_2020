@@ -33,7 +33,7 @@ We added --split to fastq-dump command to get R1 and R2 fastq for each SRR entry
 
 Make a SRR_pull.sh script in the experiment directory and run the script as sbatch submission to Alder.
 ```
-sbatch SRR.pull.sh
+sbatch SRRpull.sh
 ```
 
 Check to see if the script is running.
@@ -217,7 +217,7 @@ sbatch featureCounts.sh
 ```
 
 
-## Step 9: Making TrackHubs using HOMOR
+## Step 9: Making TrackHubs using HOMER
 
 ### Make Tag Directories
 The first step to running HOMER is to make Tag Directories: http://homer.ucsd.edu/homer/ngs/tagDir.html We will make a folder Tag_Directories and then make tags for each sample WT and KO sample individually and all the input samples together. This is approach is specifically based for this experiment in which we have only 2-3 biological replicates per condition and input samples are not matched to individual samples. 
