@@ -18,7 +18,7 @@ echo ${sample} "starting vdb_validate"
 #https://reneshbedre.github.io/blog/fqutil.html
 #######################################################################################
 
-vdb-validate /alder/home/xlum/KCl_RNAseq/SRA/${sample} 2> output/SRA_checksum/${sample}_SRAcheck.log
+vdb-validate /alder/home/xlum/Wenderski_RNAseq/SRA/${sample} 2> output/SRA_checksum/${sample}_SRAcheck.log
 
 echo ${sample} "done"
 
