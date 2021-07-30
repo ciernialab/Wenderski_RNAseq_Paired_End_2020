@@ -136,13 +136,13 @@ Run the script.
 sbatch trim.sh
 ```
 
-## Repeat QC on post trim file
+## Step 5: Repeat QC on post trim file
 This step is the same as pretrim.
 ```
 sbatch postrim_fastqc.sh
 ```
 
-# Step 5: QC of Fastq Files: Contamination Screening
+# Step 6: QC of Fastq Files: Contamination Screening
 FastQ Screen is an application allowing us to search a large sequence dataset against a panel of different genomes to determine from where the data originate.
 
 The program generates both text and graphical output to inform you what proportion of the library was able to map, either uniquely or to more than one location, against each of the specified reference genomes. 
@@ -154,7 +154,7 @@ sbatch fastqscreen.sh
 
 The output is found in output/FastqScreen_multiqc_report.html
 
-## Step 6: Align to mm10 genome using STAR
+## Step 7: Align to mm10 genome using STAR
 
 ### Generating star index 
 We first need to generate star indices for efficient mapping of RNA-seq fastq data to the indexed reference genome.
@@ -179,7 +179,7 @@ sbatch STAR_align.sh
 
 output star count matrix in the format: SRR11313882.ReadsPerGene.out.tab can be exported using FileZilla for expression analysis using Rstudio utilizing either edgeR or DESeq2.
 
-## Step 7: Filter aligned files (Optional)
+## Step 8: Filter aligned files (Optional)
 We will now convert sam files to bam and filter to remove PCR duplicates, remove unmapped reads and econdary alignments (multi-mappers), and remove unpaired reads. This step is optional because star count matrix provides the same gene count output as featureCounts which requires prior data filtering using SAMFilter.
 
 Samtools is used to convert sam to bam.
@@ -194,7 +194,7 @@ Run the following script.
 sbatch SamtoolsFiltering.sh
 ```
 
-## Step 8: Counting Reads using featureCounts (Optional)
+## Step 9: Counting Reads using featureCounts (Optional)
 Now that we have aligned reads to the mm10 genome, the next step is to count how many reads have been mapped to each gene. This step is optional because star count matrix provides the same gene count output as featureCounts. 
 
 The input files required are BAM files and an associated annotation file in GTF format. featureCounts (alternative htseq-count can be used instead) takes the alignment coordinates for each read and cross-references that to the coordinates for features described in the GTF file. featureCounts is best used for counting reads associated with gene but not splice isoforms and transcripts.
@@ -222,7 +222,7 @@ sbatch featureCounts.sh
 ```
 
 
-## Step 9: Making TrackHubs using HOMER
+## Step 10: Making TrackHubs using HOMER
 
 ### Make Tag Directories
 The first step to running HOMER is to make Tag Directories: http://homer.ucsd.edu/homer/ngs/tagDir.html We will make a folder Tag_Directories and then make tags for each sample WT and KO sample individually and all the input samples together. This is approach is specifically based for this experiment in which we have only 2-3 biological replicates per condition and input samples are not matched to individual samples. 
