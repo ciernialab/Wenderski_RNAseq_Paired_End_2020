@@ -123,7 +123,7 @@ Sliding window: scans in a 4 base window, cuts when the average quality drops be
 
 Log outputs number of input reads, trimmed, and surviving reads in the trim_log_samplename.
 
-It uses TruSeq3-PE.fa (comes wiht Trimmomatic download).
+It uses TruSeq3-PE.fa (comes with Trimmomatic download).
 
 The path is set in bash_profile with $ADAPTERS
 To check the content of the file:
